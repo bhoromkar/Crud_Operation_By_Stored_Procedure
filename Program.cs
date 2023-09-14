@@ -18,30 +18,69 @@ namespace Crud_Operation_By_Storedprocedure
                             database= student; 
                             integrated security = sspi; 
                            Trusted_Connection = true";
-            SqlConnection conn = new SqlConnection(connectionString);
-            //insertDataByStoredProcedure(conn);
-            displaydatabyStoredProcedure(conn);
-           // updateStudentInfo(conn);
-            deleteDataOfStudent(conn);
+            SqlConnection conn = new SqlConnection(connectionString); 
+            Boolean exp =true;
+            while (exp)
+            {
+                Console.WriteLine("Enter \n 1. Insert Data \n 2.Update Data \n 3.Delete Data \n 4.Display Data \n 5.Exit");
+                Console.WriteLine("Enter Option");
+                int option = int.Parse(Console.ReadLine());
+                switch(option)
+                {
+                    case 1:
+                        insertDataByStoredProcedure(conn);
+                        break;
+                    case 2:
+                        updateStudentInfo(conn);
+                        break;  
+                    case 3:
+                        deleteDataOfStudent(conn);
+                        break;
+                    case 4:
+                        displaydatabyStoredProcedure(conn);
+                        break;
+                    case 5:
+                       exp = false;
+                       break;
+                    default:
+                        Console.WriteLine("invalid");
+                        break;
 
 
-            displaydatabyStoredProcedure(conn); 
+
+                }
+
+            }
+            
+          
         }
 
         private static void deleteDataOfStudent(SqlConnection conn)
         {
+            Console.WriteLine("-------********* Data of   Deletation *********----");
+
             conn.Open();
             try
             {
-                Console.WriteLine("enter student id");
+                Console.WriteLine("Enter student id");
                 int id = int.Parse(Console.ReadLine());
                 string procedure = "DeleteStudentInfo";
                 SqlCommand delete = new SqlCommand(procedure, conn);
                 delete.CommandType = CommandType.StoredProcedure;
                 delete.Parameters.AddWithValue("@id", id);
                 int rowsAffected = delete.ExecuteNonQuery();
-                Console.WriteLine(rowsAffected.ToString() + "rows affected");
-                Console.WriteLine("data deleted succesfully");
+               
+                if(rowsAffected > 0) 
+                {
+                    Console.WriteLine("Data deleted succesfully");
+                    Console.WriteLine(rowsAffected.ToString() + "rows affected");
+                }
+                else
+                {
+                    Console.WriteLine("Data not Found!");
+
+                }
+                
             }
             catch (SqlException ex)
             {
@@ -55,6 +94,7 @@ namespace Crud_Operation_By_Storedprocedure
 
         private static void displaydatabyStoredProcedure(SqlConnection conn)
         {
+            Console.WriteLine("-------********* DISPLAY TABLE DATA  *********----");
             conn.Open();
             string procedure = "spReadData";
             try
@@ -85,15 +125,17 @@ namespace Crud_Operation_By_Storedprocedure
 
         public static void insertDataByStoredProcedure(SqlConnection conn)
         {
-            
+            Console.WriteLine("-------********* Data insertion  *********----");
+
+
             conn.Open();
             try
             {
-                Console.WriteLine("enter name");
+                Console.WriteLine("Enter Name");
                 string name = Console.ReadLine();
-                Console.WriteLine("enter age");
+                Console.WriteLine("Enter Age");
                 int age = int.Parse(Console.ReadLine());
-                Console.WriteLine("enter mobile number");
+                Console.WriteLine("Enter Mobile Number");
                 long mobile = long.Parse(Console.ReadLine());
 
                 SqlCommand insertCommand = new SqlCommand("spStudentdata", conn);
@@ -103,7 +145,7 @@ namespace Crud_Operation_By_Storedprocedure
                 insertCommand.Parameters.AddWithValue("@age", age);
                 insertCommand.Parameters.AddWithValue("@mobileNumber", mobile);
                 int rowsAffected = insertCommand.ExecuteNonQuery();
-                Console.WriteLine("data inserted successfully");
+                Console.WriteLine("Data Inserted Successfully");
                 Console.WriteLine(rowsAffected.ToString() + " row(s) affected");
             }
             catch (SqlException ex)
@@ -118,12 +160,15 @@ namespace Crud_Operation_By_Storedprocedure
         }
         public static void updateStudentInfo(SqlConnection conn)
         {
+
+            Console.WriteLine("-------********* Data updation  *********----");
+
             conn.Open();
             try { 
-            Console.WriteLine("enter student id");
-           int id = int.Parse(Console.ReadLine());
-            Console.WriteLine("enter student mobileNumber");
-           long mobile = long.Parse(Console.ReadLine());
+            Console.WriteLine("Enter Student Id");
+            int id = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter Student Mobile Number");
+            long mobile = long.Parse(Console.ReadLine());
             SqlCommand updateCommand = new SqlCommand("UpdatestudentInfo", conn);
             updateCommand.CommandType = CommandType.StoredProcedure;
            
@@ -140,9 +185,18 @@ namespace Crud_Operation_By_Storedprocedure
 
             param.Value = mobile;
             int rowsAffected =updateCommand.ExecuteNonQuery();
-           
-            Console.WriteLine(rowsAffected.ToString() + " row(s) affected");
-            Console.WriteLine("data updated successfully");
+                if (rowsAffected > 0)
+                {
+                    Console.WriteLine("Data Updated succesfully");
+                    Console.WriteLine(rowsAffected.ToString() + " row(s) affected");
+                }
+                else
+                {
+                    Console.WriteLine("Data not Found!");
+
+                }
+
+                
             }
             catch(SqlException ex) 
             {
